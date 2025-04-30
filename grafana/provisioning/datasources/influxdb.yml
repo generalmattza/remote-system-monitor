@@ -1,0 +1,32 @@
+apiVersion: 1
+
+datasources:
+  - name: influxdb3-core-SQL
+    type: influxdb
+    uid: influxdb3-core-SQL-1
+    access: proxy
+    url: http://influxdb3:8181  # Adjust to http://localhost:8183 if Grafana is on the host
+    isDefault: true
+    jsonData:
+      version: SQL  # Workaround: Use InfluxQL mode for SQL queries
+      dbName: $INFLUXDB_BUCKET
+      httpMode: POST
+      tlsSkipVerify: true  # Set to false in production with proper TLS
+      insecureGrpc: true
+    secureJsonData:
+      token: $INFLUXDB_TOKEN
+
+
+  - name: influxdb3-core-InfluxQL
+    type: influxdb
+    uid: influxdb3-core-InfluxQL-1
+    access: proxy
+    url: http://influxdb3:8181
+    orgId: 1  # Adjust if using a specific organization
+    editable: false  # Prevent UI edits
+    jsonData:
+      dbName: ${INFLUXDB_BUCKET}
+      httpHeaderName1: 'Authorization'
+      tlsSkipVerify: true  # Set to false in production with proper TLS
+    secureJsonData:
+      httpHeaderValue1: 'Bearer ${INFLUXDB_TOKEN}'
