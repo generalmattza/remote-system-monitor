@@ -306,7 +306,7 @@
           },
           "decimals": 2,
           "mappings": [],
-          "max": 1,
+          "max": 1.1,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -316,11 +316,11 @@
               },
               {
                 "color": "#EAB839",
-                "value": 0.8
+                "value": 0.9
               },
               {
                 "color": "red",
-                "value": 0.9
+                "value": 1
               }
             ]
           }
@@ -458,7 +458,7 @@
       "options": {
         "colorMode": "background",
         "graphMode": "area",
-        "justifyMode": "center",
+        "justifyMode": "auto",
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
@@ -469,8 +469,8 @@
           "values": true
         },
         "showPercentChange": false,
-        "textMode": "value_and_name",
-        "wideLayout": false
+        "textMode": "auto",
+        "wideLayout": true
       },
       "pluginVersion": "11.6.0",
       "targets": [
@@ -638,7 +638,7 @@
       "options": {
         "colorMode": "background",
         "graphMode": "none",
-        "justifyMode": "center",
+        "justifyMode": "auto",
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
@@ -1017,7 +1017,7 @@
       "options": {
         "colorMode": "background",
         "graphMode": "none",
-        "justifyMode": "center",
+        "justifyMode": "auto",
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
@@ -1213,7 +1213,7 @@
       "options": {
         "colorMode": "background",
         "graphMode": "none",
-        "justifyMode": "center",
+        "justifyMode": "auto",
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
@@ -1224,8 +1224,8 @@
           "values": false
         },
         "showPercentChange": false,
-        "textMode": "value_and_name",
-        "wideLayout": false
+        "textMode": "auto",
+        "wideLayout": true
       },
       "pluginVersion": "11.6.0",
       "targets": [
@@ -1371,6 +1371,46 @@
         }
       ],
       "title": "Docker Memory Usage",
+      "transformations": [
+        {
+          "id": "seriesToRows",
+          "options": {}
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": true,
+                "field": "Value"
+              }
+            ]
+          }
+        },
+        {
+          "id": "rowsToFields",
+          "options": {
+            "mappings": [
+              {
+                "fieldName": "Time",
+                "handlerKey": "__ignore"
+              },
+              {
+                "fieldName": "Metric",
+                "handlerKey": "field.name"
+              }
+            ]
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": ".* { container_name: (.*)}",
+            "renamePattern": "$1"
+          }
+        }
+      ],
       "type": "stat"
     },
     {
@@ -1385,7 +1425,6 @@
             "mode": "continuous-blues"
           },
           "decimals": 0,
-          "displayName": "${__field.labels.container_name}",
           "fieldMinMax": false,
           "mappings": [],
           "min": 0,
@@ -1415,19 +1454,19 @@
       "options": {
         "colorMode": "background",
         "graphMode": "none",
-        "justifyMode": "center",
+        "justifyMode": "auto",
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "allValues"
           ],
           "fields": "",
-          "values": false
+          "values": true
         },
         "showPercentChange": false,
-        "textMode": "value_and_name",
-        "wideLayout": false
+        "textMode": "auto",
+        "wideLayout": true
       },
       "pluginVersion": "11.6.0",
       "targets": [
@@ -1541,6 +1580,42 @@
         }
       ],
       "title": "Docker CPU Usage",
+      "transformations": [
+        {
+          "id": "seriesToRows",
+          "options": {}
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": true,
+                "field": "Value"
+              }
+            ]
+          }
+        },
+        {
+          "id": "rowsToFields",
+          "options": {
+            "mappings": [
+              {
+                "fieldName": "Time",
+                "handlerKey": "__ignore"
+              }
+            ]
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": ".* { container_name: (.*)}",
+            "renamePattern": "$1"
+          }
+        }
+      ],
       "type": "stat"
     },
     {
@@ -1573,6 +1648,19 @@
       "interval": "10m",
       "options": {
         "calculate": false,
+        "calculation": {
+          "xBuckets": {
+            "mode": "size",
+            "value": ""
+          },
+          "yBuckets": {
+            "mode": "size",
+            "scale": {
+              "type": "linear"
+            },
+            "value": ""
+          }
+        },
         "cellGap": 1,
         "cellValues": {
           "decimals": 0,
@@ -1581,13 +1669,13 @@
         "color": {
           "exponent": 0.7,
           "fill": "text",
-          "max": 90,
+          "max": 100,
           "min": -20,
           "mode": "scheme",
           "reverse": false,
           "scale": "exponential",
           "scheme": "Greys",
-          "steps": 8
+          "steps": 9
         },
         "exemplars": {
           "color": "rgba(255,0,255,0.7)"
@@ -2014,6 +2102,7 @@
           },
           "mappings": [],
           "max": 100,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -2849,5 +2938,5 @@
   "timezone": "browser",
   "title": "System Monitoring",
   "uid": "cek8zndo7mscga",
-  "version": 121
+  "version": 128
 }
