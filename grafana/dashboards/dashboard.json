@@ -2902,31 +2902,28 @@
       {
         "current": {
           "text": [
-            "lm26consys1",
-            "lm26consys2"
+            "All"
           ],
           "value": [
-            "lm26consys1",
-            "lm26consys2"
+            "$__all"
           ]
         },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "influxdb3-core-InfluxQL-1"
+        },
+        "definition": "SHOW TAG VALUES FROM system WITH KEY = \"host\"",
         "includeAll": true,
         "multi": true,
         "name": "hostname",
-        "options": [
-          {
-            "selected": true,
-            "text": "lm26consys1",
-            "value": "lm26consys1"
-          },
-          {
-            "selected": true,
-            "text": "lm26consys2",
-            "value": "lm26consys2"
-          }
-        ],
-        "query": "lm26consys1,lm26consys2",
-        "type": "custom"
+        "options": [],
+        "query": {
+          "query": "SHOW TAG VALUES FROM system WITH KEY = \"host\"",
+          "refId": "InfluxVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
       }
     ]
   },
@@ -2938,5 +2935,5 @@
   "timezone": "browser",
   "title": "System Monitoring",
   "uid": "cek8zndo7mscga",
-  "version": 128
+  "version": 129
 }
