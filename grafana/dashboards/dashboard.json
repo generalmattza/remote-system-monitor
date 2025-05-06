@@ -17,9 +17,10 @@
   },
   "editable": true,
   "fiscalYearStartMonth": 0,
-  "graphTooltip": 0,
+  "graphTooltip": 1,
   "id": 1,
   "links": [],
+  "liveNow": true,
   "panels": [
     {
       "collapsed": false,
@@ -707,8 +708,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 10,
-        "w": 12,
+        "h": 14,
+        "w": 10,
         "x": 0,
         "y": 7
       },
@@ -1106,8 +1107,8 @@
       },
       "gridPos": {
         "h": 14,
-        "w": 12,
-        "x": 12,
+        "w": 14,
+        "x": 10,
         "y": 7
       },
       "id": 7,
@@ -1236,6 +1237,176 @@
       "fieldConfig": {
         "defaults": {
           "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "healthy": {
+                  "color": "blue",
+                  "index": 0
+                },
+                "unhealthy": {
+                  "color": "red",
+                  "index": 1
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 12,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^health_status$/",
+          "values": true
+        },
+        "showPercentChange": false,
+        "textMode": "name",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "dataset": "iox",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "influxdb3-core-InfluxQL-1"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "container_name::tag"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "limit": "1",
+          "measurement": "docker_container_health",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT last(\"health_status\") AS \"health_status\"\nFROM \"docker_container_health\"\nWHERE (\"host\"::tag =~ /^$hostname$/) AND $timeFilter\nGROUP BY \"container_name\"::tag",
+          "rawQuery": true,
+          "rawSql": "SELECT last(\"health_status\") AS \"health_status\"\r\nFROM \"docker_container_health\"\r\nWHERE (\"host\"::tag =~ /^$hostname$/) AND $timeFilter\r\nGROUP BY \"container_name\"::tag",
+          "refId": "A",
+          "resultFormat": "table",
+          "select": [
+            [
+              {
+                "params": [
+                  "health_status"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              }
+            ]
+          ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ]
+          },
+          "tags": [
+            {
+              "key": "host::tag",
+              "operator": "=~",
+              "value": "/^$hostname$/"
+            }
+          ]
+        }
+      ],
+      "title": "Container Health",
+      "transformations": [
+        {
+          "disabled": true,
+          "id": "groupingToMatrix",
+          "options": {
+            "columnField": "container_name",
+            "emptyValue": "empty",
+            "rowField": "container_name",
+            "valueField": "last"
+          }
+        },
+        {
+          "disabled": true,
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "container_name"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "influxdb3-core-InfluxQL-1"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
             "fixedColor": "blue",
             "mode": "continuous-blues"
           },
@@ -1258,10 +1429,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 12,
+        "h": 7,
+        "w": 2,
         "x": 0,
-        "y": 17
+        "y": 24
       },
       "id": 9,
       "options": {
@@ -1426,30 +1597,8 @@
             "fixedColor": "blue",
             "mode": "continuous-blues"
           },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "axisSoftMax": 100,
-            "axisSoftMin": 0,
-            "fillOpacity": 80,
-            "gradientMode": "scheme",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
           "decimals": 0,
+          "displayName": "${__field.labels.container_name}",
           "fieldMinMax": false,
           "mappings": [],
           "min": 0,
@@ -1470,34 +1619,230 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 12,
+        "h": 7,
+        "w": 10,
+        "x": 2,
+        "y": 24
+      },
+      "id": 15,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value_and_name",
+        "wideLayout": false
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "dataset": "iox",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "influxdb3-core-InfluxQL-1"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "hide": false,
+          "measurement": "docker_container_mem",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT \nlast(\"usage_percent\") AS usage, \n\"container_name\"\nFROM \"docker_container_mem\" \nWHERE $timeFilter AND \"host\" = '${hostname}' AND \"usage_percent\" > 1\nGROUP BY \"container_name\"",
+          "rawQuery": true,
+          "rawSql": "SELECT \"host\", MAX(\"time\"), AVG(\"usage_percent\") AS usage, \"container_name\" FROM \"docker_container_cpu\" WHERE \"time\" >= $__timeFrom AND \"time\" <= $__timeTo AND \"host\" = '${hostname}' GROUP BY \"container_name\", \"host\" HAVING usage > 0",
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "usage_percent"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
+                  {
+                    "name": "host",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "name": "MAX",
+                "parameters": [
+                  {
+                    "name": "time",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "name": "AVG",
+                "parameters": [
+                  {
+                    "name": "usage_percent",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "parameters": [
+                  {
+                    "name": "container_name",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "name": "container_name",
+                  "type": "string"
+                },
+                "type": "groupBy"
+              },
+              {
+                "property": {
+                  "name": "host",
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "orderBy": {
+              "property": {
+                "type": "string"
+              },
+              "type": "property"
+            },
+            "whereJsonTree": {
+              "children1": [
+                {
+                  "id": "bb898baa-4567-489a-bcde-f1967e4b4eb5",
+                  "properties": {
+                    "field": "host",
+                    "fieldSrc": "field",
+                    "operator": "equal",
+                    "value": [
+                      "${hostname:singlequotes}"
+                    ],
+                    "valueError": [
+                      null
+                    ],
+                    "valueSrc": [
+                      "value"
+                    ],
+                    "valueType": [
+                      "text"
+                    ]
+                  },
+                  "type": "rule"
+                }
+              ],
+              "id": "a98aba89-0123-4456-b89a-b1967e16882b",
+              "type": "group"
+            },
+            "whereString": "host = '${hostname:singlequotes}'"
+          },
+          "table": "docker_container_cpu",
+          "tags": []
+        }
+      ],
+      "title": "Docker Memory Usage per Container",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "influxdb3-core-InfluxQL-1"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "blue",
+            "mode": "continuous-blues"
+          },
+          "decimals": 0,
+          "displayName": "${__field.labels.container_name}",
+          "fieldMinMax": false,
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
         "w": 12,
-        "x": 0,
-        "y": 21
+        "x": 12,
+        "y": 24
       },
       "id": 10,
       "options": {
-        "barRadius": 0,
-        "barWidth": 0.97,
-        "fullHighlight": false,
-        "groupWidth": 0.7,
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": false
-        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
         "orientation": "auto",
-        "showValue": "auto",
-        "stacking": "none",
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
         },
-        "xField": "container_name",
-        "xTickLabelRotation": -45,
-        "xTickLabelSpacing": 0
+        "showPercentChange": false,
+        "textMode": "value_and_name",
+        "wideLayout": false
       },
       "pluginVersion": "11.6.0",
       "targets": [
@@ -1510,11 +1855,11 @@
           "editorMode": "code",
           "format": "table",
           "hide": false,
-          "query": "SELECT \nlast(\"usage_percent\") AS usage, \n\"container_name\"\nFROM \"docker_container_cpu\" \nWHERE $timeFilter AND \"host\" = '${hostname}' \nGROUP BY \"container_name\"",
+          "query": "SELECT \nlast(\"usage_percent\") AS usage, \n\"container_name\"\nFROM \"docker_container_cpu\" \nWHERE $timeFilter AND \"host\" = '${hostname}' AND \"usage_percent\" > 10\nGROUP BY \"container_name\"",
           "rawQuery": true,
           "rawSql": "SELECT \"host\", MAX(\"time\"), AVG(\"usage_percent\") AS usage, \"container_name\" FROM \"docker_container_cpu\" WHERE \"time\" >= $__timeFrom AND \"time\" <= $__timeTo AND \"host\" = '${hostname}' GROUP BY \"container_name\", \"host\" HAVING usage > 0",
           "refId": "B",
-          "resultFormat": "table",
+          "resultFormat": "time_series",
           "sql": {
             "columns": [
               {
@@ -1611,15 +1956,253 @@
         }
       ],
       "title": "Docker CPU Usage per Container",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "influxdb3-core-InfluxQL-1"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "displayName": "${__field.labels.container_name}",
+          "fieldMinMax": false,
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 0,
+        "y": 31
+      },
+      "id": 14,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "min",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Max",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "alias": "",
+          "dataset": "iox",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "influxdb3-core-InfluxQL-1"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "hide": false,
+          "measurement": "docker_container_cpu",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT \nmean(\"usage_percent\")\nFROM \"docker_container_mem\"\nWHERE $timeFilter \nGROUP BY time($__interval), \"container_name\"",
+          "rawQuery": true,
+          "rawSql": "SELECT \"host\", MAX(\"time\"), AVG(\"usage_percent\") AS usage, \"container_name\" FROM \"docker_container_cpu\" WHERE \"time\" >= $__timeFrom AND \"time\" <= $__timeTo AND \"host\" = '${hostname}' GROUP BY \"container_name\", \"host\" HAVING usage > 0",
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "usage_percent"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
+                  {
+                    "name": "host",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "name": "MAX",
+                "parameters": [
+                  {
+                    "name": "time",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "name": "AVG",
+                "parameters": [
+                  {
+                    "name": "usage_percent",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "parameters": [
+                  {
+                    "name": "container_name",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "name": "container_name",
+                  "type": "string"
+                },
+                "type": "groupBy"
+              },
+              {
+                "property": {
+                  "name": "host",
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "orderBy": {
+              "property": {
+                "type": "string"
+              },
+              "type": "property"
+            },
+            "whereJsonTree": {
+              "children1": [
+                {
+                  "id": "bb898baa-4567-489a-bcde-f1967e4b4eb5",
+                  "properties": {
+                    "field": "host",
+                    "fieldSrc": "field",
+                    "operator": "equal",
+                    "value": [
+                      "${hostname:singlequotes}"
+                    ],
+                    "valueError": [
+                      null
+                    ],
+                    "valueSrc": [
+                      "value"
+                    ],
+                    "valueType": [
+                      "text"
+                    ]
+                  },
+                  "type": "rule"
+                }
+              ],
+              "id": "a98aba89-0123-4456-b89a-b1967e16882b",
+              "type": "group"
+            },
+            "whereString": "host = '${hostname:singlequotes}'"
+          },
+          "table": "docker_container_cpu",
+          "tags": []
+        }
+      ],
+      "title": "Docker Memory Usage per Container",
       "transformations": [
         {
+          "disabled": true,
           "id": "sortBy",
           "options": {
             "fields": {},
             "sort": [
               {
                 "desc": false,
-                "field": "usage"
+                "field": "Time"
               }
             ]
           }
@@ -1644,7 +2227,7 @@
           }
         }
       ],
-      "type": "barchart"
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -1654,8 +2237,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "blue",
-            "mode": "continuous-blues"
+            "mode": "palette-classic"
           },
           "custom": {
             "axisBorderShow": false,
@@ -1663,22 +2245,35 @@
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
-            "fillOpacity": 80,
-            "gradientMode": "scheme",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
             "lineWidth": 1,
+            "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
             },
             "thresholdsStyle": {
               "mode": "off"
             }
           },
-          "decimals": 1,
+          "decimals": 0,
+          "displayName": "${__field.labels.container_name}",
           "fieldMinMax": false,
           "mappings": [],
           "min": 0,
@@ -1702,191 +2297,32 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 21
+        "y": 31
       },
-      "id": 8,
+      "id": 13,
       "options": {
-        "barRadius": 0,
-        "barWidth": 0.97,
-        "fullHighlight": false,
-        "groupWidth": 0.7,
         "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": false
+          "calcs": [
+            "max",
+            "min",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Max",
+          "sortDesc": true
         },
-        "orientation": "auto",
-        "showValue": "auto",
-        "stacking": "none",
         "tooltip": {
           "hideZeros": false,
           "mode": "single",
           "sort": "none"
-        },
-        "xField": "container_name",
-        "xTickLabelRotation": -45,
-        "xTickLabelSpacing": 0
+        }
       },
       "pluginVersion": "11.6.0",
       "targets": [
         {
-          "dataset": "iox",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "influxdb3-core-InfluxQL-1"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "hide": false,
-          "query": "SELECT \nlast(\"usage_percent\") AS usage, \n\"container_name\"\nFROM \"docker_container_mem\" \nWHERE $timeFilter AND \"host\" = '${hostname}' \nGROUP BY \"container_name\"",
-          "rawQuery": true,
-          "rawSql": "SELECT \r\nlast(\"usage_percent\") AS usage, \r\n\"container_name\"\r\nFROM \"docker_container_mem\" \r\nWHERE $timeFilter AND \"host\" = '${hostname}' \r\nGROUP BY \"container_name\"",
-          "refId": "B",
-          "resultFormat": "table",
-          "sql": {
-            "columns": [
-              {
-                "name": "AVG",
-                "parameters": [
-                  {
-                    "name": "\"usage\"",
-                    "type": "functionParameter"
-                  }
-                ],
-                "type": "function"
-              },
-              {
-                "parameters": [
-                  {
-                    "name": "container_name",
-                    "type": "functionParameter"
-                  }
-                ],
-                "type": "function"
-              },
-              {
-                "name": "MAX",
-                "parameters": [
-                  {
-                    "name": "time",
-                    "type": "functionParameter"
-                  }
-                ],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "name": "container_name",
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "orderBy": {
-              "property": {
-                "type": "string"
-              },
-              "type": "property"
-            }
-          },
-          "table": "docker_container_mem"
-        }
-      ],
-      "title": "Docker Memory Usage per Container",
-      "transformations": [
-        {
-          "id": "sortBy",
-          "options": {
-            "fields": {},
-            "sort": [
-              {
-                "desc": false,
-                "field": "usage"
-              }
-            ]
-          }
-        },
-        {
-          "id": "filterByValue",
-          "options": {
-            "filters": [],
-            "match": "any",
-            "type": "include"
-          }
-        }
-      ],
-      "type": "barchart"
-    },
-    {
-      "datasource": {
-        "type": "influxdb",
-        "uid": "influxdb3-core-InfluxQL-1"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "healthy": {
-                  "color": "green",
-                  "index": 0
-                },
-                "unhealthy": {
-                  "color": "red",
-                  "index": 1
-                }
-              },
-              "type": "value"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 24,
-        "x": 0,
-        "y": 33
-      },
-      "id": 12,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "/^health_status$/",
-          "values": true
-        },
-        "showPercentChange": false,
-        "textMode": "name",
-        "wideLayout": true
-      },
-      "pluginVersion": "11.6.0",
-      "targets": [
-        {
+          "alias": "",
           "dataset": "iox",
           "datasource": {
             "type": "influxdb",
@@ -1903,92 +2339,166 @@
             },
             {
               "params": [
-                "container_name::tag"
-              ],
-              "type": "tag"
-            },
-            {
-              "params": [
                 "null"
               ],
               "type": "fill"
             }
           ],
-          "limit": "1",
-          "measurement": "docker_container_health",
+          "hide": false,
+          "measurement": "docker_container_cpu",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT last(\"health_status\") AS \"health_status\"\nFROM \"docker_container_health\"\nWHERE (\"host\"::tag =~ /^$hostname$/) AND $timeFilter\nGROUP BY \"container_name\"::tag",
+          "query": "SELECT \nmean(\"usage_percent\")\nFROM \"docker_container_cpu\"\nWHERE $timeFilter \nGROUP BY time($__interval), \"container_name\"",
           "rawQuery": true,
-          "rawSql": "SELECT last(\"health_status\") AS \"health_status\"\r\nFROM \"docker_container_health\"\r\nWHERE (\"host\"::tag =~ /^$hostname$/) AND $timeFilter\r\nGROUP BY \"container_name\"::tag",
-          "refId": "A",
-          "resultFormat": "table",
+          "rawSql": "SELECT \"host\", MAX(\"time\"), AVG(\"usage_percent\") AS usage, \"container_name\" FROM \"docker_container_cpu\" WHERE \"time\" >= $__timeFrom AND \"time\" <= $__timeTo AND \"host\" = '${hostname}' GROUP BY \"container_name\", \"host\" HAVING usage > 0",
+          "refId": "B",
+          "resultFormat": "time_series",
           "select": [
             [
               {
                 "params": [
-                  "health_status"
+                  "usage_percent"
                 ],
                 "type": "field"
               },
               {
                 "params": [],
-                "type": "last"
+                "type": "mean"
               }
             ]
           ],
           "sql": {
             "columns": [
               {
-                "parameters": [],
+                "parameters": [
+                  {
+                    "name": "host",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "name": "MAX",
+                "parameters": [
+                  {
+                    "name": "time",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "name": "AVG",
+                "parameters": [
+                  {
+                    "name": "usage_percent",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "parameters": [
+                  {
+                    "name": "container_name",
+                    "type": "functionParameter"
+                  }
+                ],
                 "type": "function"
               }
             ],
             "groupBy": [
               {
                 "property": {
+                  "name": "container_name",
+                  "type": "string"
+                },
+                "type": "groupBy"
+              },
+              {
+                "property": {
+                  "name": "host",
                   "type": "string"
                 },
                 "type": "groupBy"
               }
-            ]
+            ],
+            "orderBy": {
+              "property": {
+                "type": "string"
+              },
+              "type": "property"
+            },
+            "whereJsonTree": {
+              "children1": [
+                {
+                  "id": "bb898baa-4567-489a-bcde-f1967e4b4eb5",
+                  "properties": {
+                    "field": "host",
+                    "fieldSrc": "field",
+                    "operator": "equal",
+                    "value": [
+                      "${hostname:singlequotes}"
+                    ],
+                    "valueError": [
+                      null
+                    ],
+                    "valueSrc": [
+                      "value"
+                    ],
+                    "valueType": [
+                      "text"
+                    ]
+                  },
+                  "type": "rule"
+                }
+              ],
+              "id": "a98aba89-0123-4456-b89a-b1967e16882b",
+              "type": "group"
+            },
+            "whereString": "host = '${hostname:singlequotes}'"
           },
-          "tags": [
-            {
-              "key": "host::tag",
-              "operator": "=~",
-              "value": "/^$hostname$/"
-            }
-          ]
+          "table": "docker_container_cpu",
+          "tags": []
         }
       ],
-      "title": "Container Health",
+      "title": "Docker CPU Usage per Container",
       "transformations": [
         {
           "disabled": true,
-          "id": "groupingToMatrix",
+          "id": "sortBy",
           "options": {
-            "columnField": "container_name",
-            "emptyValue": "empty",
-            "rowField": "container_name",
-            "valueField": "last"
+            "fields": {},
+            "sort": [
+              {
+                "desc": false,
+                "field": "Time"
+              }
+            ]
           }
         },
         {
           "disabled": true,
-          "id": "partitionByValues",
+          "id": "filterByValue",
           "options": {
-            "fields": [
-              "container_name"
+            "filters": [
+              {
+                "config": {
+                  "id": "greater",
+                  "options": {
+                    "value": "1"
+                  }
+                },
+                "fieldName": "usage"
+              }
             ],
-            "keepFields": false,
-            "naming": {
-              "asLabels": true
-            }
+            "match": "any",
+            "type": "include"
           }
         }
       ],
-      "type": "stat"
+      "type": "timeseries"
     }
   ],
   "preload": false,
@@ -2029,12 +2539,12 @@
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-3h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "System Monitoring",
   "uid": "cek8zndo7mscga",
-  "version": 80
+  "version": 92
 }
