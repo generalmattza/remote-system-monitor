@@ -52,7 +52,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "semi-dark-blue"
               },
               {
                 "color": "#EAB839",
@@ -312,7 +312,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "semi-dark-blue"
               },
               {
                 "color": "#EAB839",
@@ -329,7 +329,7 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 6,
+        "w": 7,
         "x": 4,
         "y": 1
       },
@@ -450,8 +450,8 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 12,
-        "x": 10,
+        "w": 11,
+        "x": 11,
         "y": 1
       },
       "id": 12,
@@ -1210,6 +1210,7 @@
         "y": 7
       },
       "id": 15,
+      "interval": "5m",
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -1451,6 +1452,7 @@
         "y": 7
       },
       "id": 10,
+      "interval": "5m",
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -1667,11 +1669,11 @@
           "unit": "percent"
         },
         "color": {
-          "exponent": 0.7,
-          "fill": "text",
+          "exponent": 1,
+          "fill": "blue",
           "max": 100,
-          "min": -20,
-          "mode": "scheme",
+          "min": 0,
+          "mode": "opacity",
           "reverse": false,
           "scale": "exponential",
           "scheme": "Greys",
@@ -1940,7 +1942,7 @@
         "y": 14
       },
       "id": 7,
-      "interval": "30s",
+      "interval": "5m",
       "options": {
         "legend": {
           "calcs": [
@@ -2076,7 +2078,7 @@
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 30,
+            "fillOpacity": 20,
             "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
@@ -2090,8 +2092,8 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
-            "spanNulls": false,
+            "showPoints": "never",
+            "spanNulls": 3600000,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -2130,7 +2132,7 @@
         "y": 21
       },
       "id": 6,
-      "interval": "5m",
+      "interval": "10m",
       "options": {
         "legend": {
           "calcs": [],
@@ -2469,7 +2471,7 @@
           "measurement": "docker_container_cpu",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT \nmax(\"usage_percent\")\nFROM \"docker_container_mem\"\nWHERE $timeFilter AND \"usage_percent\" > 0\nGROUP BY time($__interval), \"container_name\"",
+          "query": "SELECT \nmean(\"usage_percent\")\nFROM \"docker_container_mem\"\nWHERE $timeFilter AND \"usage_percent\" > 0 AND (\"host\"::tag =~ /^$hostname$/)\nGROUP BY time($__interval), \"container_name\"",
           "rawQuery": true,
           "rawSql": "SELECT \"host\", MAX(\"time\"), AVG(\"usage_percent\") AS usage, \"container_name\" FROM \"docker_container_cpu\" WHERE \"time\" >= $__timeFrom AND \"time\" <= $__timeTo AND \"host\" = '${hostname}' GROUP BY \"container_name\", \"host\" HAVING usage > 0",
           "refId": "B",
@@ -2740,7 +2742,7 @@
           "measurement": "docker_container_cpu",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT \nmax(\"usage_percent\")\nFROM \"docker_container_cpu\"\nWHERE $timeFilter AND \"usage_percent\" > 0\nGROUP BY time($__interval), \"container_name\"",
+          "query": "SELECT \nmean(\"usage_percent\")\nFROM \"docker_container_cpu\"\nWHERE $timeFilter AND \"usage_percent\" > 0 AND (\"host\"::tag =~ /^$hostname$/)\nGROUP BY time($__interval), \"container_name\"",
           "rawQuery": true,
           "rawSql": "SELECT \"host\", MAX(\"time\"), AVG(\"usage_percent\") AS usage, \"container_name\" FROM \"docker_container_cpu\" WHERE \"time\" >= $__timeFrom AND \"time\" <= $__timeTo AND \"host\" = '${hostname}' GROUP BY \"container_name\", \"host\" HAVING usage > 0",
           "refId": "B",
@@ -2891,6 +2893,192 @@
         }
       ],
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "influxdb3-core-InfluxQL-1"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "scaleDistribution": {
+              "type": "linear"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 17,
+        "w": 12,
+        "x": 0,
+        "y": 41
+      },
+      "id": 17,
+      "interval": "5m",
+      "options": {
+        "calculate": false,
+        "cellGap": 1,
+        "cellValues": {
+          "unit": "decbytes"
+        },
+        "color": {
+          "exponent": 1,
+          "fill": "green",
+          "max": 100000,
+          "mode": "opacity",
+          "reverse": false,
+          "scale": "exponential",
+          "scheme": "YlGnBu",
+          "steps": 128
+        },
+        "exemplars": {
+          "color": "rgba(255,0,255,0.7)"
+        },
+        "filterValues": {
+          "le": 1e-9
+        },
+        "legend": {
+          "show": false
+        },
+        "rowsFrame": {
+          "layout": "auto"
+        },
+        "tooltip": {
+          "mode": "single",
+          "showColorScale": false,
+          "yHistogram": false
+        },
+        "yAxis": {
+          "axisPlacement": "left",
+          "reverse": false,
+          "unit": "decbytes"
+        }
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "influxdb3-core-InfluxQL-1"
+          },
+          "hide": false,
+          "query": "SELECT\n  DIFFERENCE(\"read_bytes\") AS \"read_bytes\"\nFROM (\n  SELECT\n    MAX(\"io_service_bytes_recursive_read\") AS \"read_bytes\"\n  FROM \"docker_container_blkio\"\n  WHERE $timeFilter AND (\"host\"::tag =~ /^$hostname$/)\n  GROUP BY time($__interval), \"container_name\" \n)\nWHERE \"read_bytes\" > 0\nGROUP BY \"container_name\" FILL(0)\n",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Docker Block IO (Read)",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": ".* { container_name: (.*) }",
+            "renamePattern": "$1"
+          }
+        }
+      ],
+      "type": "heatmap"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "influxdb3-core-InfluxQL-1"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "scaleDistribution": {
+              "type": "linear"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 17,
+        "w": 12,
+        "x": 12,
+        "y": 41
+      },
+      "id": 18,
+      "interval": "5m",
+      "options": {
+        "calculate": false,
+        "cellGap": 1,
+        "cellValues": {
+          "unit": "decbytes"
+        },
+        "color": {
+          "exponent": 1,
+          "fill": "orange",
+          "max": 25000000,
+          "mode": "opacity",
+          "reverse": false,
+          "scale": "exponential",
+          "scheme": "YlGnBu",
+          "steps": 128
+        },
+        "exemplars": {
+          "color": "rgba(255,0,255,0.7)"
+        },
+        "filterValues": {
+          "le": 0
+        },
+        "legend": {
+          "show": false
+        },
+        "rowsFrame": {
+          "layout": "auto"
+        },
+        "tooltip": {
+          "mode": "single",
+          "showColorScale": false,
+          "yHistogram": false
+        },
+        "yAxis": {
+          "axisPlacement": "left",
+          "reverse": false,
+          "unit": "decbits"
+        }
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "influxdb3-core-InfluxQL-1"
+          },
+          "hide": false,
+          "query": "SELECT\n  DIFFERENCE(\"write_bytes\") AS \"write_bytes\"\nFROM (\n  SELECT\n    MAX(\"io_service_bytes_recursive_write\") AS \"write_bytes\"\n  FROM \"docker_container_blkio\"\n  WHERE $timeFilter AND (\"host\"::tag =~ /^$hostname$/)\n  GROUP BY time($__interval), \"container_name\"\n)\nWHERE \"write_bytes\" > 0\nGROUP BY \"container_name\"\n",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Docker Block IO (Write)",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": ".* { container_name: (.*) }",
+            "renamePattern": "$1"
+          }
+        }
+      ],
+      "type": "heatmap"
     }
   ],
   "preload": false,
@@ -2901,9 +3089,7 @@
     "list": [
       {
         "current": {
-          "text": [
-            "All"
-          ],
+          "text": "All",
           "value": [
             "$__all"
           ]
@@ -2935,5 +3121,5 @@
   "timezone": "browser",
   "title": "System Monitoring",
   "uid": "cek8zndo7mscga",
-  "version": 129
+  "version": 145
 }
