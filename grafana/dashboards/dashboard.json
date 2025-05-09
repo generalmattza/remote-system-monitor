@@ -1958,7 +1958,7 @@
         "y": 9
       },
       "id": 7,
-      "interval": "5m",
+      "interval": "10m",
       "options": {
         "legend": {
           "calcs": [
@@ -2003,7 +2003,7 @@
           "measurement": "system_load",
           "orderByTime": "DESC",
           "policy": "default",
-          "query": "SELECT \nmean(\"load1\") / max(\"n_cpus\") AS \"load_1\",\nmean(\"load5\") / max(\"n_cpus\") AS \"load_5\",\nmean(\"load15\") / max(\"n_cpus\") AS \"load_15\"\nFROM \"system\" \nWHERE (\"host\"::tag =~ /^$hostname$/) AND $timeFilter \nGROUP BY time($__interval) fill(null) \nORDER BY time DESC\n",
+          "query": "SELECT \nmax(\"load1\") / max(\"n_cpus\") AS \"load_1\",\nmax(\"load5\") / max(\"n_cpus\") AS \"load_5\",\nmax(\"load15\") / max(\"n_cpus\") AS \"load_15\"\nFROM \"system\" \nWHERE (\"host\"::tag =~ /^$hostname$/) AND $timeFilter \nGROUP BY time($__interval) fill(null) \nORDER BY time DESC\n",
           "rawQuery": true,
           "rawSql": "SELECT \r\n    DATE_BIN(INTERVAL '1 minute', time) AS _time,\r\n    AVG(usage_user) AS load_1,\r\n    host,\r\n    cpu\r\nFROM cpu\r\nWHERE time >= $__timeFrom AND time <= $__timeTo AND host = ${hostname:singlequote} AND cpu = 'cpu-total'\r\nGROUP BY _time, host, cpu\r\nORDER BY _time",
           "refId": "A",
@@ -2146,7 +2146,7 @@
         "y": 9
       },
       "id": 13,
-      "interval": "5m",
+      "interval": "10m",
       "options": {
         "legend": {
           "calcs": [
@@ -2417,7 +2417,7 @@
         "y": 9
       },
       "id": 14,
-      "interval": "5m",
+      "interval": "10m",
       "options": {
         "legend": {
           "calcs": [
@@ -2937,7 +2937,7 @@
         "y": 22
       },
       "id": 17,
-      "interval": "5m",
+      "interval": "10m",
       "options": {
         "calculate": false,
         "cellGap": 1,
@@ -3030,7 +3030,7 @@
         "y": 22
       },
       "id": 18,
-      "interval": "5m",
+      "interval": "10m",
       "options": {
         "calculate": false,
         "cellGap": 1,
@@ -3137,5 +3137,5 @@
   "timezone": "browser",
   "title": "System Monitoring",
   "uid": "cek8zndo7mscga",
-  "version": 149
+  "version": 150
 }
