@@ -1171,7 +1171,7 @@
           "measurement": "disk",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT \"used_percent\" AS \"disk\" FROM \"disk\" WHERE (\"host\"::tag =~ /^$hostname$/) AND $timeFilter",
+          "query": "SELECT last(\"used_percent\") AS disk FROM \"disk\" WHERE (\"host\"::tag =~ /^$hostname$/) AND $timeFilter",
           "rawQuery": true,
           "rawSql": "SELECT \"time\", \"used_percent\" AS \"DISK\" FROM \"disk\" WHERE \"time\" >= $__timeFrom AND \"time\" <= $__timeTo AND host = ${hostname:singlequote} ORDER BY \"time\" DESC LIMIT 1",
           "refId": "A",
@@ -1333,22 +1333,8 @@
           },
           "editorMode": "code",
           "format": "table",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
+          "groupBy": [],
           "hide": false,
-          "limit": "2",
           "measurement": "system",
           "orderByTime": "DESC",
           "policy": "default",
@@ -1444,7 +1430,6 @@
           "format": "table",
           "groupBy": [],
           "hide": false,
-          "limit": "2",
           "measurement": "mem",
           "orderByTime": "ASC",
           "policy": "default",
@@ -1460,6 +1445,10 @@
                   "total"
                 ],
                 "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
               },
               {
                 "params": [
@@ -3105,9 +3094,13 @@
     "list": [
       {
         "current": {
-          "text": "All",
+          "text": [
+            "lm26consys1",
+            "lm26consys2"
+          ],
           "value": [
-            "$__all"
+            "lm26consys1",
+            "lm26consys2"
           ]
         },
         "datasource": {
@@ -3137,5 +3130,5 @@
   "timezone": "browser",
   "title": "System Monitoring",
   "uid": "cek8zndo7mscga",
-  "version": 150
+  "version": 154
 }
