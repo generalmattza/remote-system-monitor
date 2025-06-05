@@ -199,6 +199,7 @@
         "y": 1
       },
       "id": 12,
+      "interval": "10m",
       "options": {
         "colorMode": "background",
         "graphMode": "area",
@@ -246,6 +247,7 @@
               "type": "fill"
             }
           ],
+          "hide": true,
           "limit": "1",
           "measurement": "docker",
           "orderByTime": "ASC",
@@ -292,6 +294,17 @@
               "value": "/^$hostname$/"
             }
           ]
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "influxdb3-core-InfluxQL-1"
+          },
+          "hide": false,
+          "query": "SELECT last(\"health_status\") AS \"health_status\"\nFROM \"docker_container_health\"\nWHERE time >= now() - 1h\nGROUP BY time(1h), \"container_name\"::tag",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "table"
         }
       ],
       "title": "Container Status",
@@ -1989,10 +2002,11 @@
               "type": "fill"
             }
           ],
+          "hide": false,
           "measurement": "system_load",
           "orderByTime": "DESC",
           "policy": "default",
-          "query": "SELECT \nmax(\"load1\") / max(\"n_cpus\") AS \"load_1\",\nmax(\"load5\") / max(\"n_cpus\") AS \"load_5\",\nmax(\"load15\") / max(\"n_cpus\") AS \"load_15\"\nFROM \"system\" \nWHERE (\"host\"::tag =~ /^$hostname$/) AND $timeFilter \nGROUP BY time($__interval) fill(null) \nORDER BY time DESC\n",
+          "query": "SELECT \n    max(\"load1\") / max(\"n_cpus\") AS \"load_1\",\n    max(\"load5\") / max(\"n_cpus\") AS \"load_5\",\n    max(\"load15\") / max(\"n_cpus\") AS \"load_15\"\nFROM \"system\" \nWHERE (\"host\"::tag =~ /^$hostname$/) AND $timeFilter \nGROUP BY time($__interval) fill(null) \nORDER BY time DESC",
           "rawQuery": true,
           "rawSql": "SELECT \r\n    DATE_BIN(INTERVAL '1 minute', time) AS _time,\r\n    AVG(usage_user) AS load_1,\r\n    host,\r\n    cpu\r\nFROM cpu\r\nWHERE time >= $__timeFrom AND time <= $__timeTo AND host = ${hostname:singlequote} AND cpu = 'cpu-total'\r\nGROUP BY _time, host, cpu\r\nORDER BY _time",
           "refId": "A",
