@@ -301,7 +301,7 @@
             "uid": "influxdb3-core-InfluxQL-1"
           },
           "hide": false,
-          "query": "SELECT last(\"health_status\") AS \"health_status\"\nFROM \"docker_container_health\"\nWHERE time >= now() - 1h\nGROUP BY time(1h), \"container_name\"::tag",
+          "query": "SELECT last(\"health_status\") AS \"health_status\"\nFROM \"docker_container_health\"\nWHERE time >= now() - 10m\nGROUP BY time(1h), \"container_name\"::tag",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "table"
@@ -3144,5 +3144,5 @@
   "timezone": "browser",
   "title": "System Monitoring",
   "uid": "cek8zndo7mscga",
-  "version": 156
+  "version": 161
 }
